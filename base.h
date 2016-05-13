@@ -48,20 +48,30 @@ Nodo * criaNodo ()
  * @param lin   [Linha da coordenada a ser armazenada]
  * @param col   [Coluna da coordenada a ser armazenada]
  */
-void insere (Nodo **Pilha, int lin, int col)
+void push (Nodo **Pilha, int lin, int col)
 {
   Nodo *n;
  
   n = criaNodo();
   n->coordenadas = ((lin*100) + col); // OBS-1
-  n->prox = *Pilha;
+  n->prox = NULL;
+
+  if (*Pilha == NULL)
+    *Pilha = n;
+  else
+  {
+    Nodo *aux = *Pilha;
+
+    while (aux->prox != NULL)
+      aux = aux->prox;
+
+    aux->prox = n;
+  }
 
   /**
    * [OBS-1]
    * Armazena as coordenadas em uma unica variavel
    * Facilita na busca e comparacao de elementos */
- 
-  *Pilha = n;
 }
 
 
