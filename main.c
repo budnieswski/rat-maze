@@ -24,12 +24,12 @@ int main(int argc, char **argv)
 
 void verifica_adjacentes()
 {
-  //
+  //teste
 }
 
 
 /**
- * Initialize and fills the maze 
+ * Initialize and fills the maze
  * @param [int] x [Rat initial line position]
  * @param [int] y [Rat initial column position]
  */
