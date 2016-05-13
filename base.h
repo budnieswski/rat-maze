@@ -1,7 +1,7 @@
-#define PAREDE      0x23 // #
+#define PAREDE      0xDB // block
 #define LIVRE       0x20 // white space
 #define VISITADA    0x2E // .
-#define BECO        0x2D // -
+#define BECO        0xB0 // dotted block
 #define ATUAL       0x40 // @
 
 typedef struct Nodo
@@ -11,6 +11,23 @@ typedef struct Nodo
 } Nodo;
 
 int labirinto[30][30];
+
+int codifica (int x, int y)
+{
+  return (x*100) + y;
+}
+
+
+int get_y (int codificado)
+{
+  return codificado%100;
+}
+
+
+int get_x (int codificado)
+{
+  return codificado/100;
+}
 
 
 /**
@@ -53,7 +70,7 @@ void push (Nodo **Pilha, int lin, int col)
   Nodo *n;
  
   n = criaNodo();
-  n->coordenadas = ((lin*100) + col); // OBS-1
+  n->coordenadas = codifica(lin, col); // OBS-1
   n->prox = NULL;
 
   if (*Pilha == NULL)

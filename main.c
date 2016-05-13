@@ -6,14 +6,26 @@
 void gera_labirinto();
 void imprimir();
 
+int pos_atual;
 
 int main(int argc, char **argv)
 {
+  Nodo *Pilha;
+  inicializa(&Pilha);
+
   gera_labirinto(2, 2);
+
+  pos_atual = codifica(2, 2);
+
   imprimir();
   return 0;
 }
 
+
+void verifica_adjacentes()
+{
+  //
+}
 
 
 /**
@@ -61,10 +73,8 @@ void imprimir()
   {
     for (j=0; j<30; j++)
     {
-      if (labirinto[i][j] == 0)
-        printf("%c ", LIVRE);
-      else
-        printf("%c ", labirinto[i][j]);
+        printf("%c", labirinto[i][j]);
+        // busca
     }
     printf("\n");
   }
