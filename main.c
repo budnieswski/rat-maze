@@ -16,7 +16,7 @@ void imprimir();
 
 int main(int argc, char **argv)
 {
-  gera_labirinto();
+  gera_labirinto(2, 2);
   imprimir();
   return 0;
 }
@@ -24,12 +24,14 @@ int main(int argc, char **argv)
 
 
 /**
- * Cria as bordas do labirinto
+ * Initialize and fills the maze 
+ * @param [int] x [Rat initial line position]
+ * @param [int] y [Rat initial column position]
  */
-void gera_labirinto()
+void gera_labirinto(int x, int y)
 {
   int i, j;
-  
+
   // Alimenta o 'rand()', para que nao seja sempre a mesma sequencia
   srand( (unsigned)time(NULL) );
 
@@ -37,13 +39,13 @@ void gera_labirinto()
   {
     for (j=0; j<30; j++)
     {
-      // Definindo as bordas
+      // Filling maze borders
       if (i==0 || i==29)
       {
         labirinto[i][j] = PAREDE;
         labirinto[j][i] = PAREDE;
       }
-      else if (j!=0 && j!=29) // Evita sobreescrita das paredes laterais
+      else if (j!=0 && j!=29) // Avoid overwriting sides walls
       {
         // Rand dos lugares
         if (rand()%3 == 0)
@@ -53,6 +55,9 @@ void gera_labirinto()
       }
     }
   }
+
+  // Setting rat start position
+  labirinto[x][y] = ATUAL;
 }
 
 
