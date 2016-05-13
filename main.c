@@ -10,13 +10,13 @@
 
 int labirinto[30][30];
 
-void inicializa_paredes();
+void gera_labirinto();
 void imprimir();
 
 
 int main(int argc, char **argv)
 {
-	inicializa_paredes();
+	gera_labirinto();
 	imprimir();
 	return 0;
 }
@@ -25,19 +25,30 @@ int main(int argc, char **argv)
 /**
  * Cria as bordas do labirinto
  */
-void inicializa_paredes()
+void gera_labirinto()
 {
 	int i, j;
 	
+	// Alimenta o 'rand()', para que nao seja sempre a mesma sequencia
+	srand( (unsigned)time(NULL) );
+
 	for (i=0; i<30; i++)
 	{
 		for (j=0; j<30; j++)
 		{
+			// Definindo as bordas
 			if (i==0 || i==29)
 			{
-				// Primeira e ultima linha & coluna
 				labirinto[i][j] = PAREDE;
 				labirinto[j][i] = PAREDE;
+			}
+			else if (j!=0) // Evita que sobreescreva a primeira linha da parede
+			{
+				// Rand dos lugares
+				if (rand()%3 == 0)
+					labirinto[i][j] = PAREDE;
+				else
+					labirinto[i][j] = LIVRE;
 			}
 		}
 	}
