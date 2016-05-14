@@ -28,7 +28,9 @@ int main(int argc, char **argv)
   return 0;
 }
 
-
+/**
+ * Percorre o labirinto
+ */
 void percorre()
 {
   int nova_posicao = verifica_adjacentes();

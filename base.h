@@ -12,21 +12,39 @@ typedef struct Nodo
 
 int labirinto[30][30];
 
+
+/**
+ * Converte as coordenadas em uma unica variavel
+ * Facilita na busca e comparacao de elementos
+ * @param  x [linha]
+ * @param  y [coluna]
+ * @return   [cordenadas codificadas]
+ */
 int codifica (int x, int y)
 {
   return (x*100) + y;
 }
 
 
-int get_y (int codificado)
-{
-  return codificado%100;
-}
-
-
+/**
+ * Decodifica a coordenada X (linha)
+ * @param  codificado [coordenadas codificadas]
+ * @return            [indice da posicao X que estava codificada]
+ */
 int get_x (int codificado)
 {
   return codificado/100;
+}
+
+
+/**
+ * Decodifica a coordenada Y (coluna)
+ * @param  codificado [coordenadas codificadas]
+ * @return            [indice da posicao Y que estava codificada]
+ */
+int get_y (int codificado)
+{
+  return codificado%100;
 }
 
 
@@ -84,11 +102,6 @@ void push (Nodo **Pilha, int lin, int col)
 
     aux->prox = n;
   }
-
-  /**
-   * [OBS-1]
-   * Armazena as coordenadas em uma unica variavel
-   * Facilita na busca e comparacao de elementos */
 }
 
 
