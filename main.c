@@ -4,6 +4,8 @@
 #include "base.h"
 
 void gera_labirinto();
+int verifica_adjacentes();
+void percorre();
 void imprimir();
 
 int pos_atual;
@@ -14,17 +16,73 @@ int main(int argc, char **argv)
   inicializa(&Pilha);
 
   gera_labirinto(2, 2);
-
   pos_atual = codifica(2, 2);
 
-  imprimir();
+  int i;
+  for (i = 0; i < 100; ++i)
+  {
+    percorre();
+    imprimir();
+  }
+
   return 0;
 }
 
 
-void verifica_adjacentes()
+void percorre()
 {
-  //teste
+  int nova_posicao = verifica_adjacentes();
+  if (nova_posicao != 0)
+  {
+    int atual_x = get_x(pos_atual);
+    int atual_y = get_y(pos_atual);
+
+    int novo_x = get_x(nova_posicao);
+    int novo_y = get_y(nova_posicao);
+
+    // Posicao atual e modificada como visitada
+    labirinto[atual_x][atual_y] = VISITADA;
+
+    // Muda visualmente o local do rato
+    labirinto[novo_x][novo_y] = ATUAL;
+
+    // Muda a atual para a nova posicao
+    pos_atual = nova_posicao;
+
+    //
+    // ARMAZENAR NA PILHA
+    //
+  }
+}
+
+
+/**
+ * Verify around positions
+ * @return [coded positions]
+ */
+int verifica_adjacentes()
+{
+  int atual_x = get_x(pos_atual);
+  int atual_y = get_y(pos_atual);
+
+  int cima      = labirinto[ (atual_x-1) ][atual_y];
+  int baixo     = labirinto[ (atual_x+1) ][atual_y];
+  int direita   = labirinto[(atual_x)][ (atual_y+1) ];
+  int esquerda  = labirinto[(atual_x)][ (atual_y-1) ];
+
+  // Procurar primeiro as livres
+  if ( baixo == LIVRE ) return codifica((atual_x+1), atual_y);
+  if ( cima == LIVRE ) return codifica((atual_x-1), atual_y);
+  if ( direita == LIVRE ) return codifica(atual_x, (atual_y+1));
+  if ( esquerda == LIVRE ) return codifica(atual_x, (atual_y-1));
+
+  // Se nenhuma livre, retrocede pelas ja visitadas
+  if ( baixo == VISITADA ) return codifica((atual_x+1), atual_y);
+  if ( cima == VISITADA ) return codifica((atual_x-1), atual_y);
+  if ( direita == VISITADA ) return codifica(atual_x, (atual_y+1));
+  if ( esquerda == VISITADA ) return codifica(atual_x, (atual_y-1));
+
+  return 0;
 }
 
 
@@ -68,6 +126,7 @@ void gera_labirinto(int x, int y)
 
 void imprimir()
 {
+  system("cls");
   int i, j;
   for (i=0; i<30; i++)
   {
@@ -78,4 +137,5 @@ void imprimir()
     }
     printf("\n");
   }
+  // sleep();
 }
