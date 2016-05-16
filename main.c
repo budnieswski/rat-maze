@@ -4,7 +4,8 @@
 #include "base.h"
 
 void gera_labirinto();
-int verifica_adjacentes();
+int verifica_adjacentes(int coordenadas);
+int is_beco(int coordenadas);
 void percorre();
 void imprimir();
 
@@ -33,16 +34,17 @@ int main(int argc, char **argv)
  */
 void percorre()
 {
-  int nova_posicao = verifica_adjacentes();
+  int nova_posicao = verifica_adjacentes(pos_atual);
+
+  int atual_x = get_x(pos_atual);
+  int atual_y = get_y(pos_atual);
+
   if (nova_posicao != 0)
   {
-    int atual_x = get_x(pos_atual);
-    int atual_y = get_y(pos_atual);
-
     int novo_x = get_x(nova_posicao);
     int novo_y = get_y(nova_posicao);
 
-    // Posicao atual e modificada como visitada
+    // Posicao atual é modificada como visitada
     labirinto[atual_x][atual_y] = VISITADA;
 
     // Muda visualmente o local do rato
@@ -59,32 +61,113 @@ void percorre()
 
 
 /**
+ * Verifica se as po
+ * @return [description]
+ */
+int is_beco(int coordenadas)
+{
+  int x = get_x(coordenadas);
+  int y = get_y(coordenadas);
+
+  int em_volta[4] = {
+    labirinto[ (x-1) ][y], // cima
+    labirinto[ (x+1) ][y], // baixo
+    labirinto[(x)][ (y+1) ], // direita
+    labirinto[(x)][ (y-1) ], // esquerda
+  };
+
+  int count = 0; // Se a incidencia for 3 é um beco
+
+  int i;
+  for (i = 0; i < 4; ++i)
+  {
+    if (em_volta[i] == PAREDE || em_volta[i] == BECO)
+      count++;
+  }
+
+  if (count > 2)
+    return 1;
+
+  return 0;
+}
+
+
+/**
+ * Procura em volta se tem posicoes livres
+ * @return [description]
+ */
+int preferencia_livre(int coordenadas)
+{
+  int x = get_x(coordenadas);
+  int y = get_y(coordenadas);
+
+  int em_volta[4] = {
+    labirinto[ (x-1) ][y], // cima
+    labirinto[ (x+1) ][y], // baixo
+    labirinto[(x)][ (y+1) ], // direita
+    labirinto[(x)][ (y-1) ], // esquerda
+  };
+
+  int count = 0; // Se a incidencia for 3 é um beco
+
+  int i;
+  for (i = 0; i < 4; ++i)
+  {
+    if (em_volta[i] == LIVRE)
+      count++;
+  }
+
+  if (count > 2)
+    return 1;
+
+  return 0;
+}
+
+
+/**
  * Verify around positions
  * @return [coded positions]
  */
-int verifica_adjacentes()
+int verifica_adjacentes(int coordenadas)
 {
-  int atual_x = get_x(pos_atual);
-  int atual_y = get_y(pos_atual);
+  int x = get_x(coordenadas);
+  int y = get_y(coordenadas);
 
-  int cima      = labirinto[ (atual_x-1) ][atual_y];
-  int baixo     = labirinto[ (atual_x+1) ][atual_y];
-  int direita   = labirinto[(atual_x)][ (atual_y+1) ];
-  int esquerda  = labirinto[(atual_x)][ (atual_y-1) ];
+  int cima      = labirinto[ (x-1) ][y];
+  int baixo     = labirinto[ (x+1) ][y];
+  int direita   = labirinto[(x)][ (y+1) ];
+  int esquerda  = labirinto[(x)][ (y-1) ];
 
-  // Procurar primeiro as livres
-  if ( baixo == LIVRE ) return codifica((atual_x+1), atual_y);
-  if ( cima == LIVRE ) return codifica((atual_x-1), atual_y);
-  if ( direita == LIVRE ) return codifica(atual_x, (atual_y+1));
-  if ( esquerda == LIVRE ) return codifica(atual_x, (atual_y-1));
+  int nova_posicao;
+  // Procura primeiro as LIVRES
+  if ( baixo == LIVRE )           nova_posicao = codifica((x+1), y);
+  else if ( cima == LIVRE )       nova_posicao = codifica((x-1), y);
+  else if ( direita == LIVRE )    nova_posicao = codifica(x, (y+1));
+  else if ( esquerda == LIVRE )   nova_posicao = codifica(x, (y-1));
 
-  // Se nenhuma livre, retrocede pelas ja visitadas
-  if ( baixo == VISITADA ) return codifica((atual_x+1), atual_y);
-  if ( cima == VISITADA ) return codifica((atual_x-1), atual_y);
-  if ( direita == VISITADA ) return codifica(atual_x, (atual_y+1));
-  if ( esquerda == VISITADA ) return codifica(atual_x, (atual_y-1));
+  // Se nenhuma livre, retrocede pelas ja VISITADAS
+  else if ( baixo == VISITADA )           nova_posicao = codifica((x+1), y);
+  else if ( cima == VISITADA )            nova_posicao = codifica((x-1), y);
+  else if ( direita == VISITADA )         nova_posicao = codifica(x, (y+1));
+  else if ( esquerda == VISITADA )        nova_posicao = codifica(x, (y-1));
 
-  return 0;
+  // Verifica se a nova posição não é um BECO
+  int beco = is_beco(nova_posicao);
+  if (beco == 1)
+  {
+    int beco_x = get_x(nova_posicao);
+    int beco_y = get_y(nova_posicao);
+
+    // Marca a posição do beco
+    labirinto[beco_x][beco_y] = BECO;
+
+    // Procura por uma nova posição
+    return verifica_adjacentes(coordenadas);
+  }
+
+  // Dando preferencia para as posições LIVRES
+
+  return nova_posicao;
 }
 
 
